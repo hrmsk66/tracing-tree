@@ -45,6 +45,8 @@ pub struct Config {
     pub verbose_exit: bool,
     /// Whether to print squiggly brackets (`{}`) around the list of fields in a span.
     pub bracketed_fields: bool,
+    /// Whether to print the time with higher precision.
+    pub higher_precision: bool,
 }
 
 impl Config {
@@ -102,6 +104,13 @@ impl Config {
         }
     }
 
+    pub fn with_higher_precision(self, higher_precision: bool) -> Self {
+        Self {
+            higher_precision,
+            ..self
+        }
+    }
+
     pub(crate) fn prefix(&self) -> String {
         let mut buf = String::new();
         if self.render_thread_ids {
@@ -138,6 +147,7 @@ impl Default for Config {
             verbose_entry: false,
             verbose_exit: false,
             bracketed_fields: false,
+            higher_precision: false,
         }
     }
 }
