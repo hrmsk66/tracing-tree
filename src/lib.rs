@@ -295,6 +295,12 @@ where
             }
         }
 
+        if self.config.indent_lines && matches!(style, SpanMode::Close { .. } | SpanMode::PostClose) {
+            if let Some(timestamp) = self.get_timestamp(id, ctx) {
+                write!(&mut current_buf, "{}", timestamp).expect("Unable to write to buffer");
+            }
+        }
+
         bufs.indent_current(indent, &self.config, style);
         let writer = self.make_writer.make_writer();
         bufs.flush_current_buf(writer)
