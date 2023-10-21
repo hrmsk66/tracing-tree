@@ -400,12 +400,18 @@ where
             }
         }
 
+        if self.config.indent_lines && matches!(style, SpanMode::Close { .. } | SpanMode::PostClose) {
+            if let Some(timestamp) = self.get_timestamp(span) {
+                write!(&mut current_buf, "{}", timestamp).expect("Unable to write to buffer");
+            }
+        }
+
         bufs.indent_current(indent, &self.config, style);
         let writer = self.make_writer.make_writer();
         bufs.flush_current_buf(writer)
     }
 
-    fn get_timestamp<S>(&self, span: SpanRef<S>) -> Option<String>
+    fn get_timestamp<S>(&self, span: &SpanRef<S>) -> Option<String>
     where
         S: Subscriber + for<'span> LookupSpan<'span>,
     {
@@ -547,7 +553,7 @@ where
         // check if this event occurred in the context of a span.
         // if it has, get the start time of this span.
         if let Some(span) = span {
-            if let Some(timestamp) = self.get_timestamp(span) {
+            if let Some(timestamp) = self.get_timestamp(&span) {
                 write!(&mut event_buf, "{}", timestamp).expect("Unable to write to buffer");
             }
         }
