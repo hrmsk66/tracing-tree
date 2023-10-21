@@ -400,7 +400,16 @@ where
             }
         }
 
-        if self.config.indent_lines && matches!(style, SpanMode::Close { .. } | SpanMode::PostClose) {
+        if matches!(style, SpanMode::Close { .. } | SpanMode::PostClose) {
+            // Print span name on close.
+            write!(
+                current_buf,
+                "{name}",
+                name = self.styled(Style::new().fg(Color::Green).bold(), span.metadata().name())
+            )
+            .expect("Unable to write to buffer");
+
+            // Print span duration on close.
             if let Some(timestamp) = self.get_timestamp(span) {
                 write!(&mut current_buf, "{}", timestamp).expect("Unable to write to buffer");
             }
